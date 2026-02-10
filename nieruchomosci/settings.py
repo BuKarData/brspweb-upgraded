@@ -11,15 +11,33 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "super-secret-key")
 # Debug
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-#  Dozwolone hosty (na Railway najlepiej *)
-ALLOWED_HOSTS = ["braspol.pl", "www.braspol.pl", "0s2qosca.up.railway.app", 'brspweb-production.up.railway.app']
+# Dozwolone hosty
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",") if os.environ.get("ALLOWED_HOSTS") else [
+    "braspol.pl",
+    "www.braspol.pl",
+    "*.up.railway.app",
+    ".railway.app",
+    "localhost",
+    "127.0.0.1"
+]
+
+# Dla Railway - akceptuj wszystkie subdomeny
+if os.environ.get("RAILWAY_ENVIRONMENT"):
+    ALLOWED_HOSTS = ["*"]
 
 
+# CSRF - dla Railway i produkcji
 CSRF_TRUSTED_ORIGINS = [
     "https://www.braspol.pl",
     "https://braspol.pl",
-    "https://brspweb-production.up.railway.app",  #dla testów
 ]
+
+# Dodaj Railway domeny jeśli na Railway
+if os.environ.get("RAILWAY_ENVIRONMENT"):
+    CSRF_TRUSTED_ORIGINS.extend([
+        "https://*.up.railway.app",
+        "https://*.railway.app",
+    ])
 
 # settings.py
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -97,11 +115,25 @@ if not _DB_URL:
 
 
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=f"postgresql://postgres:HLofOUuncDNWONKnPhOdJheaUPWcrfWO@turntable.proxy.rlwy.net:24544/railway"
-    )
-}
+# Database configuration - Railway automatycznie ustawi DATABASE_URL
+database_url = os.environ.get('DATABASE_URL')
+
+if database_url:
+    # Produkcja (Railway) - użyj DATABASE_URL
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=database_url,
+            conn_max_age=600
+        )
+    }
+else:
+    # Lokalne środowisko - użyj SQLite
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Walidatory haseł
