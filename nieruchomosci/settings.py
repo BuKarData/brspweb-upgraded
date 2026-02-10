@@ -148,7 +148,7 @@ STORAGES = {
     },
 }
 
-#  Pliki media (jeżeli używasz)
+#  Pliki media
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
