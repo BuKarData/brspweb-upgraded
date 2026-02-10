@@ -1,6 +1,4 @@
-from django.contrib import admin
-from django.urls import path, include
-from oferty import views
+from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import home, lista_ofert, system_status, manual_update

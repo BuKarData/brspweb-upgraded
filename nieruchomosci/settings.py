@@ -39,11 +39,11 @@ if os.environ.get("RAILWAY_ENVIRONMENT"):
         "https://*.railway.app",
     ])
 
-# settings.py
+# Bezpieczeństwo SSL - tylko na produkcji
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
 
 # Aplikacje
@@ -52,17 +52,12 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-     "django.contrib.humanize",
+    "django.contrib.humanize",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "oferty",
     "rest_framework",
-    'drf_spectacular',
 ]
-
-REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS' : 'drf_spectacular.openapi.AutoSchema'
-}
 
 # Middleware
 MIDDLEWARE = [
@@ -81,10 +76,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = "nieruchomosci.urls"
 WSGI_APPLICATION = "nieruchomosci.wsgi.application"
 
-# Zdjecia
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 # Szablony
 TEMPLATES = [
     {
@@ -102,21 +93,13 @@ TEMPLATES = [
     }
 ]
 
-# weź URL z kilku możliwych nazw, bo na Railway bywa różnie
-_DB_URL = (
-    os.getenv("DATABASE_PUBLIC_URL")
-    or os.getenv("RAILWAY_DATABASE_URL")
-    or os.getenv("POSTGRES_URL")          # czasem plugin wystawia też taką zmienną
-)
-
-if not _DB_URL:
-    # WOLNO użyć SQLite TYLKO lokalnie. Na produkcji to skasuj!
-    _DB_URL = "sqlite:///db.sqlite3"
-
-
-
 # Database configuration - Railway automatycznie ustawi DATABASE_URL
-database_url = os.environ.get('DATABASE_URL')
+database_url = (
+    os.environ.get('DATABASE_URL')
+    or os.environ.get('DATABASE_PUBLIC_URL')
+    or os.environ.get('RAILWAY_DATABASE_URL')
+    or os.environ.get('POSTGRES_URL')
+)
 
 if database_url:
     # Produkcja (Railway) - użyj DATABASE_URL
@@ -159,7 +142,11 @@ LANGUAGES = [
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 #  Pliki media (jeżeli używasz)
 MEDIA_URL = "/media/"

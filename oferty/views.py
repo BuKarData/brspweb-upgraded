@@ -11,12 +11,6 @@ import os
 from datetime import datetime
 from django.conf import settings
 
-def home(request):
-    return HttpResponse("Strona główna działa!")
-
-def lista_ofert(request):
-    return HttpResponse("Lista ofert działa!")
-
 class OfertyAPIView(APIView):
     """
     API zwracające listę ofert w formacie JSON gotowym dla gov.dane.pl
