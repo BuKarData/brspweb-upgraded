@@ -1,2 +1,2 @@
 release: python manage.py migrate --noinput
-web: python manage.py createsuperuser --noinput --username PawelW --email admin@example.com || true && gunicorn nieruchomosci.wsgi --log-file -
+web: python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); not User.objects.filter(username='PawelW').exists() and User.objects.create_superuser('PawelW', 'admin@example.com', 'Haslo123!')" && gunicorn nieruchomosci.wsgi --log-file -
