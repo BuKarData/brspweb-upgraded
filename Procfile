@@ -1,2 +1,2 @@
 release: python manage.py migrate --noinput
-web: gunicorn nieruchomosci.wsgi --log-file -
+web: python manage.py createsuperuser --noinput --username PawelW --email admin@example.com || true && gunicorn nieruchomosci.wsgi --log-file -
