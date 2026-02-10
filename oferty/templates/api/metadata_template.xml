@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="https://www.dane.gov.pl/static/xml/otwarte_dane_latest.xsd">
+
+    <dataset>
+        <datasetId>braspol-oferty-nieruchomosci-{{ current_date_nodash }}</datasetId>
+        <version>1.0</version>
+        <title>
+            <polish>Raport ofert nieruchomości BRASPOL</polish>
+        </title>
+        <description>
+            <polish>Dane dotyczące aktualnych ofert nieruchomości dewelopera BRASPOL Sp. z o.o. udostępnione {{ current_date }} zgodnie z obowiązującymi przepisami.</polish>
+        </description>
+        <issued>{{ current_date }}</issued>
+        <categories>
+            <category>ECON</category>
+        </categories>
+        <tags>
+            <tag>nieruchomosci</tag>
+            <tag>oferty</tag>
+            <tag>ceny</tag>
+            <tag>mieszkania</tag>
+            <tag>domy</tag>
+        </tags>
+        <conditions>
+            <source>true</source>
+            <modification>false</modification>
+        </conditions>
+        <updateFrequency>daily</updateFrequency>
+
+        <resources>
+            {% for report in reports %}
+            <resource status="published">
+                <extIdent>{{ report.id }}</extIdent>
+                <title>
+                    <polish>{{ report.title }}</polish>
+                </title>
+                <description>
+                    <polish>{{ report.description }}</polish>
+                </description>
+                <format>{{ report.format }}</format>
+                <url>{{ report.url }}</url>
+                <md5>{{ report.md5 }}</md5>
+                <availability>{{ report.availability }}</availability>
+                <dataDate>{{ current_date }}</dataDate>
+                <lastUpdateDate>{{ current_date }}T00:00:00</lastUpdateDate>
+                <hasDynamicData>false</hasDynamicData>
+                <hasHighValueData>true</hasHighValueData>
+                <hasResearchData>false</hasResearchData>
+            </resource>
+            {% endfor %}
+        </resources>
+
+        <provider>
+            <name>BRASPOL Sp. z o.o.</name>
+            <email>dane@braspol.pl</email>
+            <website>https://www.braspol.pl</website>
+        </provider>
+    </dataset>
+
+</datasets>

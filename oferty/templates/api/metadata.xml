@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="https://www.dane.gov.pl/static/xml/otwarte_dane_latest.xsd">
+
+    <dataset>
+        <datasetId>braspol-oferty-nieruchomosci-20250929</datasetId>
+        <version>1.0</version>
+        <title>
+            <polish>Raport ofert nieruchomości BRASPOL</polish>
+        </title>
+        <description>
+            <polish>Dane dotyczące aktualnych ofert nieruchomości dewelopera BRASPOL Sp. z o.o. udostępnione 2025-09-29 zgodnie z obowiązującymi przepisami.</polish>
+        </description>
+        <issued>2025-09-29</issued>
+        <categories>
+            <category>ECON</category>
+        </categories>
+        <tags>
+            <tag>nieruchomosci</tag>
+            <tag>oferty</tag>
+            <tag>ceny</tag>
+            <tag>mieszkania</tag>
+            <tag>domy</tag>
+        </tags>
+        <conditions>
+            <source>true</source>
+            <modification>false</modification>
+        </conditions>
+        <updateFrequency>daily</updateFrequency>
+
+        <resources>
+            
+            <resource status="published">
+                <extIdent>braspol-jsonld</extIdent>
+                <title>
+                    <polish>Ceny nieruchomości - JSON-LD</polish>
+                </title>
+                <description>
+                    <polish>Dane w formacie JSON-LD zgodnym ze schema.org</polish>
+                </description>
+                <format>application/ld+json</format>
+                <url>https://www.braspol.pl/api/data.jsonld</url>
+                <md5>c7fff521ef66f4fcc6f86f10aff58aea</md5>
+                <availability>remote</availability>
+                <dataDate>2025-09-29</dataDate>
+                <lastUpdateDate>2025-09-29T00:00:00</lastUpdateDate>
+                <hasDynamicData>false</hasDynamicData>
+                <hasHighValueData>true</hasHighValueData>
+                <hasResearchData>false</hasResearchData>
+            </resource>
+            
+            <resource status="published">
+                <extIdent>braspol-csv</extIdent>
+                <title>
+                    <polish>Ceny nieruchomości - CSV</polish>
+                </title>
+                <description>
+                    <polish>Dane w formacie CSV</polish>
+                </description>
+                <format>text/csv</format>
+                <url>https://www.braspol.pl/api/data.csv</url>
+                <md5>ecaa88f7fa0bf610a5a26cf545dcd3aa</md5>
+                <availability>remote</availability>
+                <dataDate>2025-09-29</dataDate>
+                <lastUpdateDate>2025-09-29T00:00:00</lastUpdateDate>
+                <hasDynamicData>false</hasDynamicData>
+                <hasHighValueData>true</hasHighValueData>
+                <hasResearchData>false</hasResearchData>
+            </resource>
+            
+            <resource status="published">
+                <extIdent>braspol-xlsx</extIdent>
+                <title>
+                    <polish>Ceny nieruchomości - Excel XLSX</polish>
+                </title>
+                <description>
+                    <polish>Dane w formacie Excel XLSX</polish>
+                </description>
+                <format>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</format>
+                <url>https://www.braspol.pl/api/data.xlsx</url>
+                <md5>369f2fa982c0050c14e61893766f690a</md5>
+                <availability>remote</availability>
+                <dataDate>2025-09-29</dataDate>
+                <lastUpdateDate>2025-09-29T00:00:00</lastUpdateDate>
+                <hasDynamicData>false</hasDynamicData>
+                <hasHighValueData>true</hasHighValueData>
+                <hasResearchData>false</hasResearchData>
+            </resource>
+            
+        </resources>
+
+        <provider>
+            <name>BRASPOL Sp. z o.o.</name>
+            <email>dane@braspol.pl</email>
+            <website>https://www.braspol.pl</website>
+        </provider>
+    </dataset>
+
+</datasets>

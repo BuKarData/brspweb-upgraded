@@ -1,0 +1,173 @@
+{
+  "@context": {
+    "@vocab": "http://schema.org/",
+    "nip": "http://purl.org/nace/NACE2/82.6",
+    "regon": "http://purl.org/nace/NACE2/54.0",
+    "metraz": "http://purl.org/qudt/vocab/area",
+    "cena": "http://purl.org/qudt/vocab/currency",
+    "dateModified": "http://purl.org/dc/terms/date"
+  },
+  "@type": "Dataset",
+  "name": "Raport ofert deweloperskich BRASPOL Paweł Więch",
+  "description": "Zestaw ofert mieszkaniowych dewelopera BRASPOL Paweł Więch",
+  "dateModified": "2025-09-15",
+  "publisher": {
+    "@type": "Organization",
+    "name": "BRASPOL PAWEŁ WIĘCH",
+    "vatID": "1250994717",
+    "taxID": "141371661",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Kilińskiego 92A",
+      "addressLocality": "Zielonka",
+      "addressRegion": "MAZOWIECKIE",
+      "postalCode": "05-220",
+      "addressCountry": "Polska"
+    },
+    "telephone": "502930015",
+    "email": "braspol@onet.pl",
+    "url": "https://www.braspol.pl"
+  },
+  "offers": [
+    {
+      "@type": "Product",
+      "name": "Oferta nr 10000003",
+      "description": "Mieszkanie 4-pokojowe o metrażu 89.28 m2.",
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "PLN",
+        "price": 1090000.0,
+        "validFrom": "2025-09-04"
+      },
+      "itemOffered": {
+        "@type": "Apartment",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "ul. Chopina 1 i 3A, Kobyłka",
+          "addressLocality": "Zielonka"
+        },
+        "numberOfRooms": 4,
+        "floorSize": {
+          "@type": "QuantitativeValue",
+          "value": 89.28,
+          "unitCode": "m2"
+        },
+        "status": "dostępne"
+      },
+      "cena_za_m2": 12208.78,
+      "pomieszczenia_przynaleznie": [
+        {
+          "nazwa": "poddasze  nieużytkowe",
+          "cena": 0.0
+        }
+      ],
+      "rabaty": [],
+      "inne_swiadczenia": []
+    },
+    {
+      "@type": "Product",
+      "name": "Oferta nr 10000002",
+      "description": "Mieszkanie 4-pokojowe o metrażu 89.28 m2.",
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "PLN",
+        "price": 999000.0,
+        "validFrom": "2025-09-03"
+      },
+      "itemOffered": {
+        "@type": "Apartment",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "ul. Chopina 1 i 3A, Kobyłka",
+          "addressLocality": "Zielonka"
+        },
+        "numberOfRooms": 4,
+        "floorSize": {
+          "@type": "QuantitativeValue",
+          "value": 89.28,
+          "unitCode": "m2"
+        },
+        "status": "dostępne"
+      },
+      "cena_za_m2": 11189.52,
+      "pomieszczenia_przynaleznie": [
+        {
+          "nazwa": "poddasze  nieużytkowe",
+          "cena": 0.0
+        }
+      ],
+      "rabaty": [],
+      "inne_swiadczenia": []
+    },
+    {
+      "@type": "Product",
+      "name": "Oferta nr 10000001",
+      "description": "Mieszkanie 4-pokojowe o metrażu 89.28 m2.",
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "PLN",
+        "price": 989000.0,
+        "validFrom": "2025-09-03"
+      },
+      "itemOffered": {
+        "@type": "Apartment",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "ul. Chopina 1 i 3A, Kobyłka",
+          "addressLocality": "Zielonka"
+        },
+        "numberOfRooms": 4,
+        "floorSize": {
+          "@type": "QuantitativeValue",
+          "value": 89.28,
+          "unitCode": "m2"
+        },
+        "status": "dostępne"
+      },
+      "cena_za_m2": 11077.51,
+      "pomieszczenia_przynaleznie": [
+        {
+          "nazwa": "poddasze  nieużytkowe",
+          "cena": 0.0
+        }
+      ],
+      "rabaty": [],
+      "inne_swiadczenia": []
+    },
+    {
+      "@type": "Product",
+      "name": "Oferta nr 10000000",
+      "description": "Mieszkanie 4-pokojowe o metrażu 89.28 m2.",
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "PLN",
+        "price": 1150000.0,
+        "validFrom": "2025-09-03"
+      },
+      "itemOffered": {
+        "@type": "Apartment",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "ul. Chopina 1 i 3A, Kobyłka",
+          "addressLocality": "Zielonka"
+        },
+        "numberOfRooms": 4,
+        "floorSize": {
+          "@type": "QuantitativeValue",
+          "value": 89.28,
+          "unitCode": "m2"
+        },
+        "status": "dostępne"
+      },
+      "cena_za_m2": 12880.82,
+      "pomieszczenia_przynaleznie": [
+        {
+          "nazwa": "Poddasze nieużytkowe",
+          "cena": 0.0
+        }
+      ],
+      "rabaty": [],
+      "inne_swiadczenia": []
+    }
+  ]
+}
