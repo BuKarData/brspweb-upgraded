@@ -285,7 +285,7 @@
           {% if inwestycja.zdjecie %}
             <img src="{{ inwestycja.zdjecie.url }}" class="d-block w-100" style="height:400px; object-fit:cover;" alt="{{ inwestycja.nazwa }}">
           {% else %}
-            <img src="{% static 'no-image.jpg' %}" class="d-block w-100" style="height:400px; object-fit:cover;" alt="Brak zdjęcia">
+            <img src="{% static 'no-image.svg' %}" class="d-block w-100" style="height:400px; object-fit:cover;" alt="Brak zdjęcia">
           {% endif %}
           <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
             <h5>{{ inwestycja.nazwa }}</h5>
@@ -321,7 +321,7 @@
           {% if inwestycja.zdjecie %}
             <img src="{{ inwestycja.zdjecie.url }}" alt="{{ inwestycja.nazwa }}" onclick="openImageModal('{{ inwestycja.zdjecie.url }}')">
           {% else %}
-            <img src="{% static 'no-image.jpg' %}" alt="Brak zdjęcia" onclick="openImageModal('{% static 'no-image.jpg' %}')">
+            <img src="{% static 'no-image.svg' %}" alt="Brak zdjęcia" onclick="openImageModal('{% static 'no-image.svg' %}')">
           {% endif %}
         </div>
       </div>

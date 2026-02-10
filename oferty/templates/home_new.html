@@ -490,7 +490,7 @@
               <img src="{{ inwestycja.zdjecie.url }}" class="d-block w-100" alt="{{ inwestycja.nazwa }}" 
                    style="max-height: 500px; object-fit: cover; border-radius: 12px;">
             {% else %}
-              <img src="{% static 'no-image.jpg' %}" class="d-block w-100" alt="Brak zdjęcia"
+              <img src="{% static 'no-image.svg' %}" class="d-block w-100" alt="Brak zdjęcia"
                    style="max-height: 500px; object-fit: cover; border-radius: 12px;">
             {% endif %}
             <div class="carousel-caption d-none d-md-block" style="background: rgba(0,0,0,0.6); border-radius: 8px; padding: 15px;">
@@ -530,8 +530,8 @@
             <img src="{{ inwestycja.zdjecie.url }}" alt="{{ inwestycja.nazwa }}" 
                  onclick="openImageModal('{{ inwestycja.zdjecie.url }}')">
           {% else %}
-            <img src="{% static 'no-image.jpg' %}" alt="Brak zdjęcia" 
-                 onclick="openImageModal('{% static 'no-image.jpg' %}')">
+            <img src="{% static 'no-image.svg' %}" alt="Brak zdjęcia" 
+                 onclick="openImageModal('{% static 'no-image.svg' %}')">
           {% endif %}
         </div>
       </div>

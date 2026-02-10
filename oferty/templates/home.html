@@ -610,7 +610,7 @@
             {% if inwestycja.zdjecie %}
               <img src="{{ inwestycja.zdjecie.url }}" class="d-block w-100" alt="{{ inwestycja.nazwa }}">
             {% else %}
-              <img src="{% static 'no-image.jpg' %}" class="d-block w-100" alt="Brak zdjecia">
+              <img src="{% static 'no-image.svg' %}" class="d-block w-100" alt="Brak zdjecia">
             {% endif %}
             <div class="hero-overlay">
               <h2>{{ inwestycja.nazwa }}</h2>
@@ -641,11 +641,11 @@
         <div class="investment-card">
           <div class="row g-0">
             <div class="col-lg-6">
-              <div class="card-img-wrapper" onclick="openImageModal('{% if inwestycja.zdjecie %}{{ inwestycja.zdjecie.url }}{% else %}{% static "no-image.jpg" %}{% endif %}')" style="cursor:pointer;">
+              <div class="card-img-wrapper" onclick="openImageModal('{% if inwestycja.zdjecie %}{{ inwestycja.zdjecie.url }}{% else %}{% static "no-image.svg" %}{% endif %}')" style="cursor:pointer;">
                 {% if inwestycja.zdjecie %}
                   <img src="{{ inwestycja.zdjecie.url }}" alt="{{ inwestycja.nazwa }}">
                 {% else %}
-                  <img src="{% static 'no-image.jpg' %}" alt="Brak zdjecia">
+                  <img src="{% static 'no-image.svg' %}" alt="Brak zdjecia">
                 {% endif %}
                 <span class="card-img-overlay-badge">
                   <i class="bi bi-building"></i> Inwestycja
