@@ -2,102 +2,360 @@
 <html lang="pl">
 {% load static %}
 {% load math_filters %}
+{% load humanize %}
 
 <head>
   <meta charset="UTF-8">
-  <title>Braspol Zielonka</title>
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Braspol - Deweloper Zielonka</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8d9a0;
+      --dark: #1a1a2e;
+      --dark-light: #16213e;
+      --text: #2d2d2d;
+      --text-muted: #6b7280;
+      --bg: #f8f7f4;
+      --white: #ffffff;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+      --radius: 12px;
+    }
 
-    body, html { margin:0; padding:0; height:100%; background-color: #ececec; }
-    .hero { display:flex; justify-content:center; align-items:center; flex-direction:column; text-align:center; }
+    * { box-sizing: border-box; }
 
-    .status-dostępne { color: green; font-weight:bold; }
-    .status-rezerwacja { color: orange; font-weight:bold; }
-    .status-sprzedane { color: red; font-weight:bold; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+    }
 
-    .inwestycja-box {
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    /* ── Navbar ── */
+    .nav-main {
+      background: var(--dark);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 1050;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+    .nav-main .navbar-brand img { height: 36px; width: auto; }
+    .nav-main .nav-link {
+      color: rgba(255,255,255,0.8) !important;
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 1rem 1.25rem !important;
+      transition: color 0.2s, background 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .nav-main .nav-link:hover,
+    .nav-main .nav-link.active {
+      color: var(--gold) !important;
+      background: rgba(255,255,255,0.05);
+    }
+    .nav-main .navbar-toggler {
+      border-color: rgba(255,255,255,0.3);
+    }
+    .nav-main .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28201,168,76,1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+    .nav-contact {
+      color: var(--gold) !important;
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+    }
+
+    /* ── Hero Carousel ── */
+    .hero-section {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-section .carousel-item img {
+      height: 70vh;
+      min-height: 400px;
+      object-fit: cover;
+      filter: brightness(0.7);
+    }
+    .hero-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      padding: 60px 40px 40px;
+      color: white;
+      text-align: center;
+    }
+    .hero-overlay h2 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .hero-overlay p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 0;
+    }
+    .hero-section .carousel-control-prev,
+    .hero-section .carousel-control-next {
+      width: 60px;
+      opacity: 0.6;
+    }
+    .hero-section .carousel-control-prev:hover,
+    .hero-section .carousel-control-next:hover { opacity: 1; }
+    .hero-section .carousel-indicators [data-bs-target] {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin: 0 5px;
+    }
+
+    /* ── Section headers ── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .section-header h2 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 12px;
+    }
+    .section-header .divider {
+      width: 60px;
+      height: 3px;
+      background: var(--gold);
+      margin: 0 auto 16px;
+      border-radius: 2px;
+    }
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ── Investment cards ── */
+    .investment-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 40px;
+      transition: box-shadow 0.3s, transform 0.3s;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .investment-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+    .investment-card .card-img-wrapper {
+      position: relative;
+      overflow: hidden;
+      height: 320px;
+    }
+    .investment-card .card-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .investment-card:hover .card-img-wrapper img {
+      transform: scale(1.05);
+    }
+    .investment-card .card-img-overlay-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: var(--gold);
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .investment-card .card-body {
+      padding: 28px 32px;
+    }
+    .investment-card .card-body h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+    .investment-card .card-location {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
       display: flex;
-      flex-wrap: wrap;               /* pozwala ładnie złamać w mobile */
-      justify-content: space-between;
       align-items: center;
-      border: 2px solid #989898;
-      border-radius: 16px;
-      background: #ffffff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      padding: 20px;
-      margin-bottom: 30px;
-}
+      gap: 6px;
+    }
+    .investment-card .card-description {
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+    .investment-card .offer-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-right: 20px;
+    }
 
+    /* ── Buttons ── */
+    .btn-gold {
+      background: var(--gold);
+      color: var(--dark);
+      border: 2px solid var(--gold);
+      font-weight: 600;
+      padding: 10px 28px;
+      border-radius: 8px;
+      transition: all 0.3s;
+      letter-spacing: 0.3px;
+      font-size: 0.95rem;
+    }
+    .btn-gold:hover {
+      background: transparent;
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+    .btn-gold-outline {
+      background: transparent;
+      color: var(--gold);
+      border: 2px solid var(--gold);
+      font-weight: 600;
+      padding: 10px 28px;
+      border-radius: 8px;
+      transition: all 0.3s;
+      letter-spacing: 0.3px;
+      font-size: 0.95rem;
+    }
+    .btn-gold-outline:hover {
+      background: var(--gold);
+      color: var(--dark);
+    }
+    .btn-gold-sm {
+      padding: 6px 16px;
+      font-size: 0.85rem;
+    }
 
-.inwestycja-info {
-  flex: 1 1 55%;   /* opis inwestycji zajmuje ok. 55% szerokości */
-}
-
-.inwestycja-img {
-  flex: 1 1 40%;   /* zdjęcie obok, 40% szerokości */
-  text-align: right;
-}
-
-.inwestycja-img img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  transition: transform 0.3s;
-}
-
-.inwestycja-img img:hover {
-  transform: scale(1.03);
-}
-
+    /* ── Popup / Modal ── */
     .popup {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
       justify-content: center;
       align-items: center;
       z-index: 2000;
+      padding: 20px;
     }
     .popup-content {
-      background: #fff;
-      padding: 30px;
-      width: 80%;
-      max-width: 700px;
+      background: var(--white);
+      padding: 36px;
+      width: 100%;
+      max-width: 750px;
       border-radius: 16px;
       position: relative;
       max-height: 90vh;
       overflow-y: auto;
       animation: fadeIn 0.3s ease-in-out;
+      box-shadow: var(--shadow-lg);
     }
-    .popup-content h3 { text-align: center; margin-bottom: 20px; font-weight: bold; }
-    .popup-content ul { list-style: none; padding: 0; }
-    .popup-content li { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-    .close {
+    .popup-content h3 {
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+      margin-bottom: 24px;
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 1.5rem;
+    }
+    .popup-close {
       position: absolute;
-      top: 15px;
+      top: 16px;
       right: 20px;
       font-size: 28px;
-      color: #666;
+      color: #999;
       cursor: pointer;
       transition: color 0.2s;
+      background: none;
+      border: none;
+      line-height: 1;
     }
-    .close:hover { color: #000; }
-    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    .popup-close:hover { color: var(--dark); }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-    /* Modal dla powiększonego zdjęcia */
+    /* ── Offer list inside popup ── */
+    .offer-item {
+      padding: 16px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .offer-item:last-child { border-bottom: none; }
+    .offer-item .offer-address {
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    .offer-item .offer-details {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+    .offer-item .offer-price {
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 1rem;
+    }
+    .offer-item .offer-price .per-m2 {
+      color: var(--text-muted);
+      font-weight: 400;
+      font-size: 0.85rem;
+    }
+
+    /* Status badges */
+    .badge-status {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .badge-dostepne { background: #dcfce7; color: #166534; }
+    .badge-rezerwacja { background: #fef3c7; color: #92400e; }
+    .badge-sprzedane { background: #fee2e2; color: #991b1b; }
+
+    /* ── Image modal ── */
     .image-modal {
       display: none;
       position: fixed;
       z-index: 3000;
       left: 0; top: 0;
       width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.9);
+      background-color: rgba(0,0,0,0.92);
       justify-content: center;
       align-items: center;
       animation: fadeIn 0.3s ease-in-out;
@@ -106,7 +364,6 @@
       max-width: 90%;
       max-height: 90%;
       border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
       transform: scale(0.9);
       opacity: 0;
       transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
@@ -123,420 +380,562 @@
       font-size: 40px;
       font-weight: bold;
       cursor: pointer;
+      transition: color 0.2s;
     }
+    .image-modal .close-modal:hover { color: var(--gold); }
 
-    /* Zdjęcie w popupie */
-    .popup-img {
-      max-width: 350px;
-      max-height: 220px;
+    /* ── Gallery in popup ── */
+    .gallery-container {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto 20px;
+    }
+    .gallery-wrapper {
+      scroll-behavior: smooth;
+      gap: 10px;
+      padding: 8px 0;
+    }
+    .gallery-thumb {
+      flex: 0 0 auto;
+      width: 130px;
+      height: 90px;
       object-fit: cover;
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
       cursor: pointer;
-      transition: transform 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
-    .popup-img:hover { transform: scale(1.02); }
+    .gallery-thumb:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .gallery-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--white);
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: background 0.3s, box-shadow 0.3s;
+      z-index: 2;
+    }
+    .gallery-arrow:hover {
+      background: var(--gold);
+      color: white;
+    }
+    .gallery-arrow.left { left: -16px; }
+    .gallery-arrow.right { right: -16px; }
 
-    .gallery-container {
-  position: relative;
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
-}
+    /* ── Standard section in popup ── */
+    .standard-box {
+      background: #faf8f3;
+      border-left: 4px solid var(--gold);
+      padding: 20px 24px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 20px;
+      font-size: 0.93rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .standard-box h5 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--dark);
+    }
 
-.gallery-wrapper {
-  scroll-behavior: smooth;
-  gap: 12px;
-  padding: 8px 0;
-}
+    /* ── About section ── */
+    .about-section {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .about-section .about-text {
+      padding: 50px;
+    }
+    .about-section .about-text h2 {
+      font-size: 2rem;
+      color: var(--dark);
+      margin-bottom: 20px;
+    }
+    .about-section .about-text p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+    .about-section .about-img img {
+      width: 100%;
+      height: 100%;
+      min-height: 300px;
+      object-fit: cover;
+    }
 
-.gallery-thumb {
-  flex: 0 0 auto;
-  width: 140px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-.gallery-thumb:hover {
-  transform: scale(1.05);
-}
+    /* ── Stats bar ── */
+    .stats-bar {
+      background: var(--dark);
+      padding: 50px 0;
+      color: white;
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-item .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-item .stat-label {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-.gallery-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,0.8);
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  transition: background 0.3s;
-}
-.gallery-arrow:hover {
-  background: rgba(255,255,255,1);
-}
-.gallery-arrow.left { left: -20px; }
-.gallery-arrow.right { right: -20px; }
+    /* ── CTA section ── */
+    .cta-section {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+      padding: 70px 0;
+      text-align: center;
+      color: white;
+    }
+    .cta-section h2 {
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+    .cta-section p {
+      color: rgba(255,255,255,0.75);
+      font-size: 1.05rem;
+      margin-bottom: 30px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-.inwestycja-standard {
-  background: #f5f5f5;
-  border-left: 4px solid #d4af37;
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 20px; 
-  font-size: 0.95rem;
-  color: #000000;
-  line-height: 1.5;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-.inwestycja-standard h5 {
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #000000;
-}
-.btn-hover-fill {
-  position: relative;
-  overflow: hidden;
-  color: #d4af37; 
-  border: 2px solid #d4af37;
-  background-color: #ffffff;
-  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
-  z-index: 1;
-}
+    /* ── Footer ── */
+    .footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.7);
+      padding: 50px 0 30px;
+    }
+    .footer h5 {
+      font-family: 'Playfair Display', serif;
+      color: var(--white);
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+    .footer p, .footer a {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.8;
+    }
+    .footer a:hover { color: var(--gold); text-decoration: none; }
+    .footer .footer-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+    .footer .footer-contact-item i { color: var(--gold); font-size: 1rem; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 20px;
+      margin-top: 30px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+    }
 
-.btn-hover-fill::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0;
-  width: 0;
-  height: 100%;
-  background-color: #d4af37;
-  z-index: -1;
-  transition: width 0.3s ease-in-out;
-}
+    /* ── Rzuty modal layout ── */
+    #rzutyModal .carousel { width: 90%; max-width: 1000px; }
+    #rzutyModal .carousel-inner img { max-height: 80vh; object-fit: contain; }
 
-.btn-hover-fill:hover::before,
-.btn-hover-fill:active::before {
-  width: 100%;
-}
-
-.btn-hover-fill:hover,
-.btn-hover-fill:active {
-  color: #fff; 
-  background-color: transparent !important; 
-  border-color: #d4af37;
-}
-
-.about-section {
-  border: 2px solid #757470;   /* elegancki złoty */
-  border-radius: 16px;         /* ładne zaokrąglenie rogów */
-  background-color: #ffffff;   /* białe tło w środku */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* lekki cień */
-  padding: 40px;               /* trochę większy odstęp */
-}
-
-.btn-hover-fill.btn-sm {
-  padding: 4px 10px;
-  font-size: 0.875rem;
-}
-
-/* Layout modala rzutów */
-#rzutyModal .carousel { width: 90%; max-width: 1000px; }
-#rzutyModal .carousel-inner img { max-height: 80vh; object-fit: contain; }
-
-
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .hero-section .carousel-item img { height: 50vh; min-height: 280px; }
+      .hero-overlay h2 { font-size: 1.6rem; }
+      .hero-overlay p { font-size: 0.95rem; }
+      .section-header h2 { font-size: 1.7rem; }
+      .investment-card .card-img-wrapper { height: 220px; }
+      .investment-card .card-body { padding: 20px 24px; }
+      .about-section .about-text { padding: 30px; }
+      .stat-item .stat-number { font-size: 2rem; }
+      .popup-content { padding: 24px 20px; }
+    }
   </style>
 </head>
 
 <body>
+
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
-        <img src="{% static 'braspolwhit.png' %}" alt="Braspol" style="height:40px; width:auto;">
+  <nav class="navbar navbar-expand-lg nav-main">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'braspolwhit.png' %}" alt="Braspol">
       </a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'home' %}">Strona główna</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'lista_ofert' %}">Oferta</a></li>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}">Strona Glowna</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'lista_ofert' %}">Oferty</a></li>
+          <li class="nav-item d-none d-lg-block"><span class="nav-link nav-contact"><i class="bi bi-telephone-fill"></i> +48 502 930 015</span></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <div class="container mt-5">
-    <h1 class="text-center">
-      <img src="{% static 'unnamed.png' %}" alt="Braspol" style="max-height:80px; width:auto;">
-    </h1>    
-    <p class="text-center text-muted">STRONA W BUDOWIE - OFERTY TESTOWE - Budujemy dla Ciebie.</p>
-
-  <div class="container mt-5">
-
-  <!-- Karuzela inwestycji -->
-  <div id="carouselInwestycje" class="carousel slide mb-5" data-bs-ride="carousel">
-    <div class="carousel-inner">
-      {% for inwestycja in inwestycje %}
-        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-          {% if inwestycja.zdjecie %}
-            <img src="{{ inwestycja.zdjecie.url }}" class="d-block w-100" style="height:400px; object-fit:cover;" alt="{{ inwestycja.nazwa }}">
-          {% else %}
-            <img src="{% static 'no-image.jpg' %}" class="d-block w-100" style="height:400px; object-fit:cover;" alt="Brak zdjęcia">
-          {% endif %}
-          <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
-            <h5>{{ inwestycja.nazwa }}</h5>
-            <p class="mb-0">{{ inwestycja.adres }}</p>
+  <!-- Hero Carousel -->
+  <section class="hero-section">
+    <div id="carouselHero" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+      <div class="carousel-indicators">
+        {% for inwestycja in inwestycje %}
+          <button type="button" data-bs-target="#carouselHero" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></button>
+        {% endfor %}
+      </div>
+      <div class="carousel-inner">
+        {% for inwestycja in inwestycje %}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            {% if inwestycja.zdjecie %}
+              <img src="{{ inwestycja.zdjecie.url }}" class="d-block w-100" alt="{{ inwestycja.nazwa }}">
+            {% else %}
+              <img src="{% static 'no-image.jpg' %}" class="d-block w-100" alt="Brak zdjecia">
+            {% endif %}
+            <div class="hero-overlay">
+              <h2>{{ inwestycja.nazwa }}</h2>
+              <p><i class="bi bi-geo-alt-fill"></i> {{ inwestycja.adres }}</p>
+            </div>
           </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselHero" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselHero" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Investments Section -->
+  <section class="py-5" style="padding-top: 80px !important;">
+    <div class="container">
+      <div class="section-header">
+        <h2>Nasze Inwestycje</h2>
+        <div class="divider"></div>
+        <p>Odkryj nasze starannie zaprojektowane osiedla w najlepszych lokalizacjach</p>
+      </div>
+
+      {% for inwestycja in inwestycje %}
+        <div class="investment-card">
+          <div class="row g-0">
+            <div class="col-lg-6">
+              <div class="card-img-wrapper" onclick="openImageModal('{% if inwestycja.zdjecie %}{{ inwestycja.zdjecie.url }}{% else %}{% static "no-image.jpg" %}{% endif %}')" style="cursor:pointer;">
+                {% if inwestycja.zdjecie %}
+                  <img src="{{ inwestycja.zdjecie.url }}" alt="{{ inwestycja.nazwa }}">
+                {% else %}
+                  <img src="{% static 'no-image.jpg' %}" alt="Brak zdjecia">
+                {% endif %}
+                <span class="card-img-overlay-badge">
+                  <i class="bi bi-building"></i> Inwestycja
+                </span>
+              </div>
+            </div>
+            <div class="col-lg-6 d-flex">
+              <div class="card-body d-flex flex-column justify-content-center">
+                <h3>{{ inwestycja.nazwa }}</h3>
+                <div class="card-location">
+                  <i class="bi bi-geo-alt"></i> {{ inwestycja.adres }}
+                </div>
+                {% if inwestycja.opis %}
+                  <p class="card-description">{{ inwestycja.opis|linebreaksbr|truncatewords:40 }}</p>
+                {% endif %}
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                  <span class="offer-count">
+                    <i class="bi bi-house-door"></i>
+                    {{ inwestycja.oferty.all|length }} {{ inwestycja.oferty.all|length|pluralize:"oferta,oferty,ofert" }}
+                  </span>
+                  {% if inwestycja.termin_zakonczenia %}
+                    <span class="offer-count">
+                      <i class="bi bi-calendar-check"></i>
+                      Termin: {{ inwestycja.termin_zakonczenia }}
+                    </span>
+                  {% endif %}
+                </div>
+                <div>
+                  <button class="btn btn-gold" onclick="showPopup('popup-{{ inwestycja.id }}')">
+                    <i class="bi bi-eye"></i> Zobacz oferty
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Popup with offers -->
+        <div id="popup-{{ inwestycja.id }}" class="popup">
+          <div class="popup-content">
+            <button class="popup-close" onclick="hidePopup('popup-{{ inwestycja.id }}')">&times;</button>
+            <h3>{{ inwestycja.nazwa }}</h3>
+
+            <!-- Gallery -->
+            <div class="gallery-container position-relative mb-3">
+              <button class="gallery-arrow left" onclick="scrollGallery(this, -1)">&#10094;</button>
+              <div class="gallery-wrapper d-flex overflow-hidden">
+                {% if inwestycja.zdjecie %}
+                  <img src="{{ inwestycja.zdjecie.url }}" alt="{{ inwestycja.nazwa }}"
+                       class="gallery-thumb" onclick="openImageModal('{{ inwestycja.zdjecie.url }}')">
+                {% endif %}
+                {% for zdj in inwestycja.zdjecia.all %}
+                  <img src="{{ zdj.obraz.url }}" alt="Zdjecie inwestycji"
+                       class="gallery-thumb" onclick="openImageModal('{{ zdj.obraz.url }}')">
+                {% endfor %}
+              </div>
+              <button class="gallery-arrow right" onclick="scrollGallery(this, 1)">&#10095;</button>
+            </div>
+
+            <!-- Offers list -->
+            <div>
+              {% for oferta in inwestycja.oferty.all %}
+                <div class="offer-item">
+                  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div>
+                      <div class="offer-address">{{ oferta.adres }}</div>
+                      <div class="offer-details">
+                        <i class="bi bi-rulers"></i> {{ oferta.metraz }} m² &nbsp;
+                        <i class="bi bi-door-open"></i> {{ oferta.pokoje }} {{ oferta.pokoje|pluralize:"pokoj,pokoje,pokoi" }}
+                      </div>
+                    </div>
+                    <div class="text-end">
+                      <span class="badge-status badge-{{ oferta.status|lower|cut:'ę' }}">{{ oferta.status }}</span>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    {% if oferta.ostatnia_cena %}
+                      <span class="offer-price">
+                        {{ oferta.ostatnia_cena|floatformat:0|intcomma }} zl
+                        {% if oferta.cena_m2 %}
+                          <span class="per-m2">({{ oferta.cena_m2|floatformat:0|intcomma }} zl/m²)</span>
+                        {% endif %}
+                      </span>
+                    {% else %}
+                      <span class="offer-details">Zapytaj o cene</span>
+                    {% endif %}
+                  </div>
+                  {% if oferta.rzuty.all %}
+                    <div class="mt-2">
+                      <button class="btn btn-gold-outline btn-gold-sm" onclick="openRzutyGallery('{{ oferta.id }}')">
+                        <i class="bi bi-map"></i> Rzuty
+                      </button>
+                    </div>
+                    <div id="rzuty-data-{{ oferta.id }}" style="display:none;">
+                      {% for rzut in oferta.rzuty.all %}
+                        <img src="{{ rzut.zdjecie.url }}" alt="Rzut {{ forloop.counter }}">
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+              {% empty %}
+                <p class="text-center py-3" style="color: var(--text-muted);">Brak ofert dla tej inwestycji</p>
+              {% endfor %}
+            </div>
+
+            {% if inwestycja.standard %}
+              <div class="standard-box">
+                <h5><i class="bi bi-award"></i> Standard wykonczenia</h5>
+                <p class="mb-0">{{ inwestycja.standard|linebreaksbr }}</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+      {% empty %}
+        <div class="text-center py-5">
+          <i class="bi bi-building" style="font-size: 3rem; color: var(--text-muted);"></i>
+          <p class="mt-3" style="color: var(--text-muted);">Brak inwestycji do wyswietlenia</p>
         </div>
       {% endfor %}
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselInwestycje" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Poprzedni</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselInwestycje" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Następny</span>
-    </button>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Szukasz wymarzonego mieszkania?</h2>
+      <p>Przejrzyj wszystkie dostepne oferty mieszkan i domow w naszych inwestycjach</p>
+      <a href="{% url 'lista_ofert' %}" class="btn btn-gold btn-lg">
+        <i class="bi bi-grid-3x3-gap"></i> Wszystkie oferty
+      </a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="py-5">
+    <div class="container">
+      <div class="about-section">
+        <div class="row g-0 align-items-stretch">
+          <div class="col-md-6 about-img">
+            <img src="{% static '07front.jpg' %}" alt="O nas" class="img-fluid">
+          </div>
+          <div class="col-md-6 d-flex">
+            <div class="about-text d-flex flex-column justify-content-center">
+              <div class="divider" style="margin: 0 0 20px;"></div>
+              <h2>O firmie Braspol</h2>
+              <p>Firma deweloperska z Zielonki. Profesjonalna obsluga, jakosc i niezaprzeczalny komfort. Budujemy domy i mieszkania z pasja i dbamy o kazdy detal.</p>
+              <p>Stawiamy na nowoczesne rozwiazania architektoniczne, najwyzszej jakosci materialy budowlane oraz lokalizacje zapewniajace komfort zycia.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>Braspol</h5>
+          <p>Firma deweloperska z Zielonki. Budujemy domy i mieszkania najwyzszej jakosci.</p>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>Kontakt</h5>
+          <div class="footer-contact-item">
+            <i class="bi bi-telephone-fill"></i>
+            <a href="tel:+48502930015">+48 502 930 015</a>
+          </div>
+          <div class="footer-contact-item">
+            <i class="bi bi-envelope-fill"></i>
+            <a href="mailto:braspol@onet.pl">braspol@onet.pl</a>
+          </div>
+          <div class="footer-contact-item">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>ul. Kilinskiego 92A, 05-220 Zielonka</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h5>Nawigacja</h5>
+          <div class="footer-contact-item">
+            <i class="bi bi-house"></i>
+            <a href="{% url 'home' %}">Strona glowna</a>
+          </div>
+          <div class="footer-contact-item">
+            <i class="bi bi-grid"></i>
+            <a href="{% url 'lista_ofert' %}">Oferty</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Braspol Pawel Wiech. Wszelkie prawa zastrzezone.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Rzuty modal -->
+  <div id="rzutyModal" class="image-modal">
+    <span class="close-modal" onclick="closeRzutyGallery()">&times;</span>
+    <div id="rzutyGallery" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner"></div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#rzutyGallery" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#rzutyGallery" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+    </div>
   </div>
 
-    <h1 class="text-center mb-4">Nasze inwestycje</h1>
-
-    {% for inwestycja in inwestycje %}
-      <div class="inwestycja-box">
-        <div class="inwestycja-info flex-grow-1 me-4">
-          <h4>{{ inwestycja.nazwa }}</h4>
-          <p class="mb-2 text-muted">{{ inwestycja.adres }}</p>
-          {% if inwestycja.opis %}
-            <p class="mb-3">{{ inwestycja.opis|linebreaksbr}}</p>
-          {% endif %}
-          <button class="btn btn-primary btn-hover-fill btn-sm" onclick="showPopup('popup-{{ inwestycja.id }}')">Szczegóły inwestycji</button>
-        </div>
-
-        <div class="inwestycja-img">
-          {% if inwestycja.zdjecie %}
-            <img src="{{ inwestycja.zdjecie.url }}" alt="{{ inwestycja.nazwa }}" onclick="openImageModal('{{ inwestycja.zdjecie.url }}')">
-          {% else %}
-            <img src="{% static 'no-image.jpg' %}" alt="Brak zdjęcia" onclick="openImageModal('{% static 'no-image.jpg' %}')">
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Popup z ofertami -->
-      <div id="popup-{{ inwestycja.id }}" class="popup">
-        <div class="popup-content shadow-lg rounded">
-          <span class="close" onclick="hidePopup('popup-{{ inwestycja.id }}')">&times;</span>
-          <h3 class="mb-4 text-center fw-bold">Oferty dla inwestycji {{ inwestycja.nazwa }}</h3>
-  
-
-          <!-- Galeria zdjęć inwestycji -->
-<div class="gallery-container position-relative mb-4">
-  <button class="gallery-arrow left" onclick="scrollGallery(this, -1)">&#10094;</button>
-  <div class="gallery-wrapper d-flex overflow-hidden">
-    {% if inwestycja.zdjecie %}
-      <img src="{{ inwestycja.zdjecie.url }}" alt="{{ inwestycja.nazwa }}"
-           class="gallery-thumb"
-           onclick="openImageModal('{{ inwestycja.zdjecie.url }}')">
-    {% endif %}
-
-    {% for zdj in inwestycja.zdjecia.all %}
-      <img src="{{ zdj.obraz.url }}" alt="Zdjęcie inwestycji"
-           class="gallery-thumb"
-           onclick="openImageModal('{{ zdj.obraz.url }}')">
-    {% endfor %}
-
-      
+  <!-- Image modal -->
+  <div id="imageModal" class="image-modal">
+    <span class="close-modal" onclick="closeImageModal()">&times;</span>
+    <img id="modalImage" src="" alt="Zdjecie powiekszne">
   </div>
-  <button class="gallery-arrow right" onclick="scrollGallery(this, 1)">&#10095;</button>
-</div>
-
-
-          <ul class="list-unstyled">
-            {% for oferta in inwestycja.oferty.all %}
-            <li class="mb-3 pb-3 border-bottom">
-                <strong>{{ oferta.adres }}</strong><br>
-                <span class="text-muted">{{ oferta.metraz }} m² • {{ oferta.pokoje }} pokoje</span><br>
-                <span class="fw-semibold">Status:</span> {{ oferta.status }}<br>
-                {% if oferta.ostatnia_cena %}
-                    <span class="fw-semibold">Cena:</span> {{ oferta.ostatnia_cena }} zł
-                    {% if oferta.cena_m2 %} (<span class="text-muted">{{ oferta.cena_m2|floatformat:0 }} zł/m²</span>) {% endif %}
-                {% else %}
-                    <span class="text-muted">Brak ceny</span>
-                {% endif %}
-        
-                {% if oferta.rzuty.all %}
-                <div class="mt-2">
-                    <button class="btn btn-sm btn-hover-fill" onclick="openRzutyGallery('{{ oferta.id }}')">
-                        Zobacz rzuty
-                    </button>
-                </div>
-        
-                <!-- Ukryty pakiet źródeł rzutów dla JS -->
-                <div id="rzuty-data-{{ oferta.id }}" style="display:none;">
-                    {% for rzut in oferta.rzuty.all %}
-                        <img src="{{ rzut.zdjecie.url }}" alt="Rzut {{ forloop.counter }}">
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </li>
-            {% empty %}
-            <li class="text-center text-muted py-3">Brak ofert dla tej inwestycji</li>
-            {% endfor %}
-        
-
-
-            
-
-            {% if inwestycja.standard %}
-              <div class="inwestycja-standard">
-              <h5>Standard wykończenia budynku</h5>
-              <p>{{ inwestycja.standard|linebreaksbr }}</p>
-              </div>
-            {% endif %}
-          </ul>
-        </div>
-      </div>
-    
-    {% empty %}
-      <p>Brak inwestycji</p>
-    {% endfor %}
-   
-    <div id="rzutyModal" class="image-modal">
-      <span class="close-modal" onclick="closeRzutyGallery()">&times;</span>
-      <div id="rzutyGallery" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner"></div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#rzutyGallery" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#rzutyGallery" data-bs-slide="next">
-          <span class="carousel-control-next-icon"></span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Modal na powiększone zdjęcie -->
-<div id="imageModal" class="image-modal">
-  <span class="close-modal" onclick="closeImageModal()">&times;</span>
-  <img id="modalImage" src="" alt="Zdjęcie powiększone">
-</div>
-
-
-    <div class="text-center mt-4">
-      <a href="{% url 'lista_ofert' %}" class="btn btn-primary btn-lg btn-hover-fill">Zobacz wszystkie oferty</a>
-    </div>
-
-    <!-- Sekcja "O nas" -->
-    <section class="container my-5 about-section">
-      <div class="row align-items-center">
-        <div class="col-md-6 mb-4 mb-md-0">
-          <h2 class="mb-3">O nas</h2>
-          <p class="lead">Firma deweloperska z Zielonki. Profesjonalna obsługa, jakość, niezaprzeczalny komfort. </p>
-        </div>
-        <div class="col-md-6 text-center">
-          <img src="{% static '07front.jpg' %}" alt="O nas"
-               class="img-fluid rounded shadow-sm"
-               style="max-height:300px; object-fit:cover">
-        </div>
-      </div>
-    </section>
-    
-
-    <div style="position: fixed; bottom: 10px; right: 10px; background: rgba(255,255,255,0.9); padding:12px 18px; border:1px solid #ddd; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); font-size:14px; line-height:1.4;">
-      <strong>Kontakt:</strong><br>
-      tel: +48 502 930 015<br>
-      email: braspol@onet.pl<br>
-      adres: ul. Kilińskiego 92A, Zielonka 05-220 
-    </div>
 
   <script>
-    function showPopup(id){
+    function showPopup(id) {
       document.getElementById(id).style.display = 'flex';
+      document.body.style.overflow = 'hidden';
     }
-    function hidePopup(id){
+    function hidePopup(id) {
       document.getElementById(id).style.display = 'none';
+      document.body.style.overflow = '';
     }
-    function openImageModal(src){
+    function openImageModal(src) {
       const modal = document.getElementById('imageModal');
       const img = document.getElementById('modalImage');
       img.src = src;
       modal.style.display = 'flex';
       setTimeout(() => modal.classList.add('show'), 10);
     }
-    function closeImageModal(){
+    function closeImageModal() {
       const modal = document.getElementById('imageModal');
       modal.classList.remove('show');
       setTimeout(() => modal.style.display = 'none', 300);
     }
-    function openRzutModal(src){
-  const modal = document.getElementById('rzutModal');
-  const img = document.getElementById('rzutImage');
-  img.src = src;
-  modal.style.display = 'flex';
-  setTimeout(() => modal.classList.add('show'), 10);
-}
-function closeRzutModal(){
-  const modal = document.getElementById('rzutModal');
-  modal.classList.remove('show');
-  setTimeout(() => modal.style.display = 'none', 300);
-}
-function scrollGallery(button, direction) {
-  const container = button.parentElement.querySelector('.gallery-wrapper');
-  const scrollAmount = container.querySelector('.gallery-thumb').offsetWidth + 12; // szerokość + odstęp
-  container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-}
+    function scrollGallery(button, direction) {
+      const container = button.parentElement.querySelector('.gallery-wrapper');
+      const thumb = container.querySelector('.gallery-thumb');
+      if (!thumb) return;
+      const scrollAmount = thumb.offsetWidth + 12;
+      container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+    function openRzutyGallery(ofertaId) {
+      const modal = document.getElementById('rzutyModal');
+      const galleryEl = document.getElementById('rzutyGallery');
+      const inner = galleryEl.querySelector('.carousel-inner');
+      const rzutyContainer = document.getElementById('rzuty-data-' + ofertaId);
 
-function openRzutyGallery(ofertaId) {
-  const modal = document.getElementById('rzutyModal');
-  const galleryEl = document.getElementById('rzutyGallery');
-  const inner = galleryEl.querySelector('.carousel-inner');
-  const rzutyContainer = document.getElementById(`rzuty-data-${ofertaId}`);
+      inner.innerHTML = '';
 
-  const carouselEl = document.getElementById('rzutyGallery');
-  const carousel = new bootstrap.Carousel(carouselEl, {
-  interval: false,   // wyłącza automatyczne przewijanie
-  });
+      if (rzutyContainer) {
+        const imgs = rzutyContainer.querySelectorAll('img');
+        if (imgs.length === 0) return;
 
-  // wyczyść poprzednie slajdy
-  inner.innerHTML = '';
+        imgs.forEach(function(img, index) {
+          const item = document.createElement('div');
+          item.className = 'carousel-item' + (index === 0 ? ' active' : '');
+          const slideImg = document.createElement('img');
+          slideImg.src = img.src;
+          slideImg.alt = img.alt || ('Rzut ' + (index + 1));
+          slideImg.className = 'd-block w-100';
+          item.appendChild(slideImg);
+          inner.appendChild(item);
+        });
 
-  if (rzutyContainer) {
-    const imgs = rzutyContainer.querySelectorAll('img');
-    if (imgs.length === 0) return;
+        const existing = bootstrap.Carousel.getInstance(galleryEl);
+        if (existing) existing.dispose();
+        new bootstrap.Carousel(galleryEl, { interval: false, ride: false });
+      }
 
-    imgs.forEach((img, index) => {
-      const item = document.createElement('div');
-      item.className = 'carousel-item' + (index === 0 ? ' active' : '');
-      const slideImg = document.createElement('img');
-      slideImg.src = img.src;
-      slideImg.alt = img.alt || ('Rzut ' + (index + 1));
-      slideImg.className = 'd-block w-100';
-      item.appendChild(slideImg);
-      inner.appendChild(item);
+      modal.style.display = 'flex';
+      setTimeout(() => modal.classList.add('show'), 10);
+    }
+    function closeRzutyGallery() {
+      const modal = document.getElementById('rzutyModal');
+      modal.classList.remove('show');
+      setTimeout(() => modal.style.display = 'none', 300);
+    }
+
+    // Close popups on backdrop click
+    document.querySelectorAll('.popup').forEach(function(popup) {
+      popup.addEventListener('click', function(e) {
+        if (e.target === popup) {
+          popup.style.display = 'none';
+          document.body.style.overflow = '';
+        }
+      });
     });
-
-    // Zresetuj/utwórz instancję Bootstrapa po wstrzyknięciu slajdów
-    const existing = bootstrap.Carousel.getInstance(galleryEl);
-    if (existing) existing.dispose();
-    new bootstrap.Carousel(galleryEl, { interval: false, ride: false });
-  }
-
-  modal.style.display = 'flex';
-  setTimeout(() => modal.classList.add('show'), 10);
-}
-
-function closeRzutyGallery() {
-  const modal = document.getElementById('rzutyModal');
-  modal.classList.remove('show');
-  setTimeout(() => modal.style.display = 'none', 300);
-}
-
-
-
-
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
