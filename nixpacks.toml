@@ -13,4 +13,4 @@ cmds = [
 ]
 
 [start]
-cmd = "python manage.py migrate --noinput; python manage.py ensure_superuser; gunicorn nieruchomosci.wsgi --bind 0.0.0.0:$PORT --log-file -"
+cmd = "python manage.py migrate --noinput && python manage.py shell -c \"import os; from django.contrib.auth import get_user_model; User = get_user_model(); not User.objects.filter(username='PawelW').exists() and User.objects.create_superuser('PawelW', 'admin@example.com', os.environ.get('ADMIN_PASSWORD'))\" && gunicorn nieruchomosci.wsgi --bind 0.0.0.0:$PORT"
