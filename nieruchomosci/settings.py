@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "super-secret-key")
 
 # Debug
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
 # Dozwolone hosty
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",") if os.environ.get("ALLOWED_HOSTS") else [
