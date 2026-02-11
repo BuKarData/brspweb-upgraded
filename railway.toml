@@ -1,0 +1,5 @@
+[build]
+buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput --clear"
+
+[deploy]
+startCommand = "python manage.py migrate --noinput && python create_admin.py && gunicorn nieruchomosci.wsgi --bind 0.0.0.0:${PORT:-8080} --log-file -"
