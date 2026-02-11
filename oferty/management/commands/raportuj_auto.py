@@ -324,20 +324,15 @@ def generate_csv_data():
             f"swiadczenie_{i+1}_kwota_pln"
         ])
 
-    csv_output = io.BytesIO()
-    csv_output.write(b'\xEF\xBB\xBF')  # UTF-8 BOM
-    
-    writer = csv.writer(io.TextIOWrapper(csv_output, encoding='utf-8-sig'), delimiter=';')
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter=';')
     writer.writerow(fieldnames)
 
     for rekord in _build_flattened_records(dane_dewelopera, oferty, max_pom, max_rab, max_swi):
         row = [rekord.get(field, "") for field in fieldnames]
         writer.writerow(row)
 
-    csv_content = csv_output.getvalue()
-    csv_output.close()
-    
-    return csv_content.decode('utf-8-sig')
+    return output.getvalue()
 
 
 def generate_xlsx_data():

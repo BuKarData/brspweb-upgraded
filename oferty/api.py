@@ -2,9 +2,9 @@ from django.http import HttpResponse
 import json 
 import hashlib
 from datetime import datetime
-from oferty.management.commands.raportuj import (
-    generate_jsonld_data, 
-    generate_csv_data, 
+from oferty.management.commands.raportuj_auto import (
+    generate_jsonld_data,
+    generate_csv_data,
     generate_xlsx_data
 )
 from django.http import FileResponse
@@ -56,12 +56,12 @@ def data_api_view(request):
             
         elif request.path.endswith('.csv'):
             data = generate_csv_data()
+            # UTF-8 BOM (\ufeff) na poczatku dla kompatybilnosci z Excel
             response = HttpResponse(
-                data,
-                content_type='text/csv; charset=utf-8'
+                '\ufeff' + data,
+                content_type='text/csv; charset=utf-8-sig'
             )
             response['Content-Disposition'] = 'attachment; filename="data.csv"'
-            response['Content-Encoding'] = 'utf-8'
             
         elif request.path.endswith('.xlsx'):
             data = generate_xlsx_data()

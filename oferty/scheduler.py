@@ -1,44 +1,55 @@
 """
-Scheduler dla automatycznego raportowania
-Uruchamia management command codziennie o 6:00 rano
+Automatyczne generowanie raportow zgodnie z ustawa deweloperska.
+Uruchamia raportuj_auto codziennie o 6:00 rano.
 """
-from apscheduler.schedulers.background import BackgroundScheduler
-from django.core.management import call_command
 import logging
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from django.core.management import call_command
 
 logger = logging.getLogger(__name__)
 
+scheduler = None
+
+
 def run_daily_report():
-    """Uruchamia dzienny raport"""
+    """Generuje raporty dzienne (CSV, XLSX, JSON-LD, metadata.xml)"""
     try:
-        logger.info("Rozpoczynam automatyczny raport...")
+        logger.info("[scheduler] Rozpoczynam automatyczne generowanie raportow...")
         call_command('raportuj_auto')
-        logger.info("Raport zakończony pomyślnie")
+        logger.info("[scheduler] Raporty wygenerowane pomyslnie.")
     except Exception as e:
-        logger.error(f"Błąd podczas automatycznego raportu: {str(e)}")
+        logger.error(f"[scheduler] Blad generowania raportow: {e}")
+
 
 def start_scheduler():
-    """Uruchamia scheduler w tle"""
+    """Uruchamia scheduler - wywolywane z apps.py ready()"""
+    global scheduler
+
+    if scheduler is not None:
+        return
+
     scheduler = BackgroundScheduler()
-    
-    # Zadanie codzienne o 6:00
+
+    # Codziennie o 6:00 rano (czas Warsaw)
     scheduler.add_job(
         run_daily_report,
-        'cron',
-        hour=6,
-        minute=0,
-        id='daily_report_job',
-        replace_existing=True
+        trigger=CronTrigger(hour=6, minute=0, timezone="Europe/Warsaw"),
+        id="daily_report",
+        name="Dzienny raport ofert deweloperskich",
+        replace_existing=True,
     )
-    
-    # Opcjonalnie: uruchom raport przy starcie aplikacji
-    # scheduler.add_job(
-    #     run_daily_report,
-    #     'date',
-    #     run_date=datetime.now() + timedelta(seconds=30)
-    # )
-    
+
+    # Uruchom tez raz przy starcie serwera (po 60 sekundach)
+    from apscheduler.triggers.date import DateTrigger
+    from datetime import datetime, timedelta
+    scheduler.add_job(
+        run_daily_report,
+        trigger=DateTrigger(run_date=datetime.now() + timedelta(seconds=60)),
+        id="startup_report",
+        name="Raport przy starcie serwera",
+        replace_existing=True,
+    )
+
     scheduler.start()
-    logger.info("Scheduler uruchomiony - raporty będą generowane codziennie o 6:00")
-    
-    return scheduler
+    logger.info("[scheduler] APScheduler uruchomiony - raporty codziennie o 6:00.")
