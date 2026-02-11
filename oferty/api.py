@@ -5,7 +5,8 @@ from datetime import datetime
 from oferty.management.commands.raportuj_auto import (
     generate_jsonld_data,
     generate_csv_data,
-    generate_xlsx_data
+    generate_xlsx_data,
+    generate_metadata_xml,
 )
 from django.http import FileResponse
 import os
@@ -21,29 +22,30 @@ def calculate_md5(content, is_binary=False):
     return md5_hash.hexdigest()
 
 def metadata_xml(request):
-    """Serwuje plik metadata.xml"""
+    """Serwuje metadata.xml zgodny z dane.gov.pl (urn:otwarte-dane:harvester:1.13)"""
     xml_file_path = os.path.join(settings.BASE_DIR, 'oferty', 'templates', 'api', 'metadata.xml')
-    
+
     if os.path.exists(xml_file_path):
         return FileResponse(open(xml_file_path, 'rb'), content_type='application/xml')
-    else:
-        from django.http import HttpResponseNotFound
-        return HttpResponseNotFound("Plik metadata.xml nie został jeszcze wygenerowany")
+
+    # Fallback: generuj dynamicznie jesli plik nie istnieje
+    content = generate_metadata_xml()
+    return HttpResponse(content, content_type='application/xml')
 
 def metadata_xml_md5(request):
-    """Serwuje MD5 dla pliku metadata.xml"""
+    """Serwuje MD5 dla metadata.xml"""
     xml_file_path = os.path.join(settings.BASE_DIR, 'oferty', 'templates', 'api', 'metadata.xml')
-    
+
     if os.path.exists(xml_file_path):
         with open(xml_file_path, 'rb') as f:
             content = f.read()
-        md5_hash = calculate_md5(content, is_binary=True)
-        response = HttpResponse(md5_hash, content_type='text/plain')
-        response['Content-Disposition'] = 'inline; filename="metadata.xml.md5"'
-        return response
     else:
-        from django.http import HttpResponseNotFound
-        return HttpResponseNotFound("Plik metadata.xml nie został jeszcze wygenerowany")
+        content = generate_metadata_xml()
+
+    md5_hash = calculate_md5(content, is_binary=True)
+    response = HttpResponse(md5_hash, content_type='text/plain')
+    response['Content-Disposition'] = 'inline; filename="metadata.xml.md5"'
+    return response
 
 def data_api_view(request):
     """Serwuje dane w różnych formatach (CSV, JSON-LD, XLSX)"""

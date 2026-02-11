@@ -9,8 +9,7 @@ from openpyxl import Workbook
 import io
 import requests
 from django.conf import settings
-import xml.etree.ElementTree as ET
-import xml.dom.minidom as minidom
+from lxml import etree as lxml_etree
 
 def get_deweloper_data():
     """Zwraca dane dewelopera"""
@@ -48,167 +47,143 @@ def calculate_md5(content, is_binary=False):
 
 
 def generate_metadata_xml():
-    """Generuje plik metadata.xml zgodny ze standardem DCAT-AP"""
-    root = ET.Element('rdf:RDF')
-    root.set('xmlns:rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#')
-    root.set('xmlns:dct', 'http://purl.org/dc/terms/')
-    root.set('xmlns:dcat', 'http://www.w3.org/ns/dcat#')
-    root.set('xmlns:foaf', 'http://xmlns.com/foaf/0.1/')
-    root.set('xmlns:vcard', 'http://www.w3.org/2006/vcard/ns#')
-    
-    # Catalog
-    catalog = ET.SubElement(root, 'dcat:Catalog')
-    catalog.set('rdf:about', 'https://www.braspol.pl/api/')
-    
-    catalog_title = ET.SubElement(catalog, 'dct:title')
-    catalog_title.set('xml:lang', 'pl')
-    catalog_title.text = 'Katalog danych deweloperskich Braspol'
-    
-    catalog_publisher = ET.SubElement(catalog, 'dct:publisher')
-    catalog_publisher_org = ET.SubElement(catalog_publisher, 'foaf:Organization')
-    catalog_pub_name = ET.SubElement(catalog_publisher_org, 'foaf:name')
-    catalog_pub_name.text = 'BRASPOL PAWEŁ WIĘCH'
-    
-    # Dataset
-    dataset = ET.SubElement(catalog, 'dcat:dataset')
-    dataset_obj = ET.SubElement(dataset, 'dcat:Dataset')
-    dataset_obj.set('rdf:about', 'https://www.braspol.pl/api/dataset/ceny-mieszkan')
-    
-    # Tytuł
-    title = ET.SubElement(dataset_obj, 'dct:title')
-    title.set('xml:lang', 'pl')
-    title.text = 'Ceny ofertowe mieszkań dewelopera Braspol - Paweł Więch'
-    
-    # Opis
-    description = ET.SubElement(dataset_obj, 'dct:description')
-    description.set('xml:lang', 'pl')
-    description.text = ('Zbiór danych zawierający aktualne ceny ofertowe mieszkań oferowanych przez '
-                       'dewelopera BRASPOL Paweł Więch zgodnie z art. 19a i 19b ustawy z dnia 21 maja 2025 r. '
-                       'o zmianie ustawy o ochronie praw nabywcy lokalu mieszkalnego lub domu jednorodzinnego '
-                       'oraz Deweloperskim Funduszu Gwarancyjnym (Dz. U. 2025 poz. 758)')
-    
-    # Wydawca
-    publisher = ET.SubElement(dataset_obj, 'dct:publisher')
-    publisher_org = ET.SubElement(publisher, 'foaf:Organization')
-    
-    pub_name = ET.SubElement(publisher_org, 'foaf:name')
-    pub_name.text = 'BRASPOL PAWEŁ WIĘCH'
-    
-    pub_homepage = ET.SubElement(publisher_org, 'foaf:homepage')
-    pub_homepage.set('rdf:resource', 'https://www.braspol.pl')
-    
-    # Dane kontaktowe
-    contact_point = ET.SubElement(dataset_obj, 'dcat:contactPoint')
-    contact = ET.SubElement(contact_point, 'vcard:Organization')
-    
-    contact_fn = ET.SubElement(contact, 'vcard:fn')
-    contact_fn.text = 'BRASPOL PAWEŁ WIĘCH'
-    
-    contact_email = ET.SubElement(contact, 'vcard:hasEmail')
-    contact_email.set('rdf:resource', 'mailto:braspol@onet.pl')
-    
-    contact_tel = ET.SubElement(contact, 'vcard:hasTelephone')
-    contact_tel.set('rdf:resource', 'tel:+48502930015')
-    
-    # Data wydania
-    issued = ET.SubElement(dataset_obj, 'dct:issued')
-    issued.set('rdf:datatype', 'http://www.w3.org/2001/XMLSchema#date')
-    issued.text = '2025-02-09'
-    
-    # Data modyfikacji
-    modified = ET.SubElement(dataset_obj, 'dct:modified')
-    modified.set('rdf:datatype', 'http://www.w3.org/2001/XMLSchema#dateTime')
-    modified.text = datetime.now().isoformat()
-    
-    # Słowa kluczowe
-    for keyword in ['deweloper', 'nieruchomości', 'ceny mieszkań', 'rynek mieszkaniowy', 'Braspol', 'Zielonka']:
-        kw = ET.SubElement(dataset_obj, 'dcat:keyword')
-        kw.set('xml:lang', 'pl')
-        kw.text = keyword
-    
-    # Język
-    language = ET.SubElement(dataset_obj, 'dct:language')
-    language.text = 'pl'
-    
-    # Częstotliwość aktualizacji
-    frequency = ET.SubElement(dataset_obj, 'dct:accrualPeriodicity')
-    frequency.set('rdf:resource', 'http://publications.europa.eu/resource/authority/frequency/DAILY')
-    
-    # Kategoria tematyczna
-    theme = ET.SubElement(dataset_obj, 'dcat:theme')
-    theme.set('rdf:resource', 'http://publications.europa.eu/resource/authority/data-theme/ECON')
-    
-    # Zakres czasowy
-    temporal = ET.SubElement(dataset_obj, 'dct:temporal')
-    period = ET.SubElement(temporal, 'dct:PeriodOfTime')
-    start_date = ET.SubElement(period, 'dcat:startDate')
-    start_date.set('rdf:datatype', 'http://www.w3.org/2001/XMLSchema#date')
-    start_date.text = '2025-02-09'
-    
-    # Pokrycie przestrzenne
-    spatial = ET.SubElement(dataset_obj, 'dct:spatial')
-    location = ET.SubElement(spatial, 'dct:Location')
-    loc_label = ET.SubElement(location, 'rdfs:label', {'xmlns:rdfs': 'http://www.w3.org/2000/01/rdf-schema#'})
-    loc_label.text = 'Zielonka, Polska'
-    
-    # Licencja
-    license_elem = ET.SubElement(dataset_obj, 'dct:license')
-    license_elem.set('rdf:resource', 'https://creativecommons.org/publicdomain/zero/1.0/')
-    
-    # Dystrybucja CSV
-    distribution_csv = ET.SubElement(dataset_obj, 'dcat:distribution')
-    dist_csv_obj = ET.SubElement(distribution_csv, 'dcat:Distribution')
-    dist_csv_obj.set('rdf:about', 'https://www.braspol.pl/api/data.csv')
-    
-    csv_title = ET.SubElement(dist_csv_obj, 'dct:title')
-    csv_title.set('xml:lang', 'pl')
-    csv_title.text = 'Ceny mieszkań - CSV'
-    
-    csv_access = ET.SubElement(dist_csv_obj, 'dcat:accessURL')
-    csv_access.set('rdf:resource', 'https://www.braspol.pl/api/data.csv')
-    
-    csv_download = ET.SubElement(dist_csv_obj, 'dcat:downloadURL')
-    csv_download.set('rdf:resource', 'https://www.braspol.pl/api/data.csv')
-    
-    csv_format = ET.SubElement(dist_csv_obj, 'dct:format')
-    csv_format.text = 'CSV'
-    
-    csv_media = ET.SubElement(dist_csv_obj, 'dcat:mediaType')
-    csv_media.text = 'text/csv'
-    
-    csv_issued = ET.SubElement(dist_csv_obj, 'dct:issued')
-    csv_issued.set('rdf:datatype', 'http://www.w3.org/2001/XMLSchema#dateTime')
-    csv_issued.text = datetime.now().isoformat()
-    
-    # Dystrybucja JSON-LD
-    distribution_jsonld = ET.SubElement(dataset_obj, 'dcat:distribution')
-    dist_jsonld_obj = ET.SubElement(distribution_jsonld, 'dcat:Distribution')
-    dist_jsonld_obj.set('rdf:about', 'https://www.braspol.pl/api/data.jsonld')
-    
-    jsonld_title = ET.SubElement(dist_jsonld_obj, 'dct:title')
-    jsonld_title.set('xml:lang', 'pl')
-    jsonld_title.text = 'Ceny mieszkań - JSON-LD'
-    
-    jsonld_access = ET.SubElement(dist_jsonld_obj, 'dcat:accessURL')
-    jsonld_access.set('rdf:resource', 'https://www.braspol.pl/api/data.jsonld')
-    
-    jsonld_download = ET.SubElement(dist_jsonld_obj, 'dcat:downloadURL')
-    jsonld_download.set('rdf:resource', 'https://www.braspol.pl/api/data.jsonld')
-    
-    jsonld_format = ET.SubElement(dist_jsonld_obj, 'dct:format')
-    jsonld_format.text = 'JSON-LD'
-    
-    jsonld_media = ET.SubElement(dist_jsonld_obj, 'dcat:mediaType')
-    jsonld_media.text = 'application/ld+json'
-    
-    jsonld_issued = ET.SubElement(dist_jsonld_obj, 'dct:issued')
-    jsonld_issued.set('rdf:datatype', 'http://www.w3.org/2001/XMLSchema#dateTime')
-    jsonld_issued.text = datetime.now().isoformat()
-    
-    # Formatowanie XML
-    xml_str = minidom.parseString(ET.tostring(root, encoding='utf-8')).toprettyxml(indent="  ", encoding="utf-8")
-    
-    return xml_str
+    """
+    Generuje plik metadata.xml zgodny ze schematem dane.gov.pl
+    (urn:otwarte-dane:harvester:1.13)
+
+    Uzywa lxml bo standardowy ElementTree nie obsluguje poprawnie
+    elementFormDefault="unqualified" (dzieci musza byc BEZ namespace).
+    """
+    NS = 'urn:otwarte-dane:harvester:1.13'
+    now = datetime.now()
+    today = date.today()
+    SITE_URL = 'https://www.braspol.pl'
+
+    # Root z namespace, dzieci BEZ namespace (elementFormDefault=unqualified)
+    root = lxml_etree.Element(f'{{{NS}}}datasets', nsmap={None: NS})
+
+    dataset = lxml_etree.SubElement(root, 'dataset')
+    dataset.set('status', 'published')
+
+    # extIdent (wymagany, max 36 znakow)
+    lxml_etree.SubElement(dataset, 'extIdent').text = 'braspol-ceny-mieszkan-01'
+
+    # title (wymagany)
+    title = lxml_etree.SubElement(dataset, 'title')
+    lxml_etree.SubElement(title, 'polish').text = (
+        'Ceny ofertowe mieszkan dewelopera BRASPOL Pawel Wiech'
+    )
+    lxml_etree.SubElement(title, 'english').text = (
+        'Real estate offer prices by developer BRASPOL'
+    )
+
+    # description (wymagany, max 1000 znakow)
+    desc = lxml_etree.SubElement(dataset, 'description')
+    lxml_etree.SubElement(desc, 'polish').text = (
+        'Zbior danych zawierajacy aktualne ceny ofertowe mieszkan oferowanych '
+        'przez dewelopera BRASPOL Pawel Wiech zgodnie z art. 19a i 19b ustawy '
+        'o ochronie praw nabywcy lokalu mieszkalnego lub domu jednorodzinnego '
+        'oraz Deweloperskim Funduszu Gwarancyjnym (Dz. U. 2025 poz. 758).'
+    )
+    lxml_etree.SubElement(desc, 'english').text = (
+        'Dataset with current apartment offer prices by developer BRASPOL '
+        'in compliance with the Polish Developer Act (art. 19a and 19b).'
+    )
+
+    # url (opcjonalny)
+    lxml_etree.SubElement(dataset, 'url').text = f'{SITE_URL}/api/'
+
+    # updateFrequency (wymagany)
+    lxml_etree.SubElement(dataset, 'updateFrequency').text = 'daily'
+
+    # categories (wymagany)
+    categories = lxml_etree.SubElement(dataset, 'categories')
+    lxml_etree.SubElement(categories, 'category').text = 'ECON'
+
+    # conditions (opcjonalny)
+    conditions = lxml_etree.SubElement(dataset, 'conditions')
+    lxml_etree.SubElement(conditions, 'source').text = 'true'
+    lxml_etree.SubElement(conditions, 'modification').text = 'true'
+    lxml_etree.SubElement(conditions, 'dbOrCopyrightedLicenseChosen').text = 'CC0 1.0'
+
+    # resources (wymagany) - CSV, JSON-LD, XLSX
+    resources = lxml_etree.SubElement(dataset, 'resources')
+
+    resource_defs = [
+        {
+            'ext_ident': 'braspol-csv-01',
+            'url': f'{SITE_URL}/api/data.csv',
+            'title_pl': 'Ceny mieszkan - format CSV',
+            'desc_pl': 'Plik CSV z cenami ofertowymi mieszkan dewelopera BRASPOL.',
+        },
+        {
+            'ext_ident': 'braspol-jsonld-01',
+            'url': f'{SITE_URL}/api/data.jsonld',
+            'title_pl': 'Ceny mieszkan - format JSON-LD',
+            'desc_pl': 'Dane strukturalne JSON-LD z cenami ofertowymi mieszkan dewelopera BRASPOL.',
+        },
+        {
+            'ext_ident': 'braspol-xlsx-01',
+            'url': f'{SITE_URL}/api/data.xlsx',
+            'title_pl': 'Ceny mieszkan - format XLSX',
+            'desc_pl': 'Arkusz Excel z cenami ofertowymi mieszkan dewelopera BRASPOL.',
+        },
+    ]
+
+    for rdef in resource_defs:
+        resource = lxml_etree.SubElement(resources, 'resource')
+        resource.set('status', 'published')
+
+        lxml_etree.SubElement(resource, 'extIdent').text = rdef['ext_ident']
+        lxml_etree.SubElement(resource, 'url').text = rdef['url']
+
+        r_title = lxml_etree.SubElement(resource, 'title')
+        lxml_etree.SubElement(r_title, 'polish').text = rdef['title_pl']
+
+        r_desc = lxml_etree.SubElement(resource, 'description')
+        lxml_etree.SubElement(r_desc, 'polish').text = rdef['desc_pl']
+
+        lxml_etree.SubElement(resource, 'availability').text = 'remote'
+        lxml_etree.SubElement(resource, 'dataDate').text = today.isoformat()
+        lxml_etree.SubElement(resource, 'lastUpdateDate').text = now.isoformat(timespec='seconds')
+        lxml_etree.SubElement(resource, 'hasDynamicData').text = 'true'
+        lxml_etree.SubElement(resource, 'isAutoDataDate').text = 'true'
+        lxml_etree.SubElement(resource, 'endlessDataDateUpdate').text = 'true'
+        lxml_etree.SubElement(resource, 'dataDateUpdatePeriod').text = 'daily'
+        lxml_etree.SubElement(resource, 'autoDataDateStart').text = '2025-02-09'
+
+        regions = lxml_etree.SubElement(resource, 'regions')
+        lxml_etree.SubElement(regions, 'terytIdent').text = '1434'
+
+    # tags (wymagany)
+    tags = lxml_etree.SubElement(dataset, 'tags')
+    tag_values = [
+        ('pl', 'deweloper'),
+        ('pl', 'nieruchomosci'),
+        ('pl', 'ceny mieszkan'),
+        ('pl', 'rynek mieszkaniowy'),
+        ('pl', 'ustawa deweloperska'),
+        ('pl', 'Braspol'),
+        ('pl', 'Zielonka'),
+        ('en', 'real estate'),
+        ('en', 'apartment prices'),
+        ('en', 'developer'),
+    ]
+    for lang, value in tag_values:
+        tag = lxml_etree.SubElement(tags, 'tag')
+        tag.set('lang', lang)
+        tag.text = value
+
+    # lastUpdateDate (opcjonalny)
+    lxml_etree.SubElement(dataset, 'lastUpdateDate').text = now.isoformat(timespec='seconds')
+
+    # hasDynamicData (opcjonalny)
+    lxml_etree.SubElement(dataset, 'hasDynamicData').text = 'true'
+
+    # Serializacja z pretty-print
+    return lxml_etree.tostring(
+        root, pretty_print=True, encoding='utf-8', xml_declaration=True
+    )
 
 
 def _build_flattened_records(dane_dewelopera, oferty, max_pom, max_rab, max_swi):
